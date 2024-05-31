@@ -39,5 +39,12 @@ namespace Tp2AAT {
           throw new Exception("El producto no existe");
         }
       
+      public string contenidosComoString() {
+        string contenido = "";
+        foreach(Producto p in productos) {
+          contenido += p.ComoString() + "\n";
+        }
+        return contenido;
+      }
     }
 }

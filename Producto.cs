@@ -32,6 +32,10 @@ namespace Tp2AAT {
       this.costo = costo;
       this.stock = stock;
     }
+
+    public string ComoString(){
+      return $"{this.nombre}\t\tPrecio: {this.costo}\tStock: {this.stock}";
+    }
   
   }
 }
