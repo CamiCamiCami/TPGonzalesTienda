@@ -4,13 +4,12 @@ using System.Collections.Generic;
 namespace Tp2AAT {
 
   class Program {
-
-    private const string SI_STR = "SI";
-    private const string NO_STR = "NO";
+    
+    //Creamos los objetos de tienda y carrito para el uso de programa
     private static Tienda tienda = AgregarProductosDefault(new Tienda());
     private static Carrito carrito = new Carrito();
 
-
+    //Creamos algunos objetos de producto para agregarlos a la tienda y que esten por default en el sistema
     private static Tienda AgregarProductosDefault(Tienda _tienda){
       _tienda.AgregarProducto(new Producto("Desodorante", 5000, 50));
       _tienda.AgregarProducto(new Producto("Vaso", 1000, 13));
@@ -36,24 +35,27 @@ namespace Tp2AAT {
       return _tienda;
     }  
 
+    //Dentro del menu interactivo, esta funcion se ejecuta primero para preguntar al usuario si es vendedor o comprador
     private static bool esVendedor(){
       while (true){
         Console.WriteLine("Quiere entrar al sistema como vendedor?");
         string respuesta = Console.ReadLine();
-
-        respuesta = respuesta.ToUpper();  
-        if (respuesta == SI_STR || respuesta == NO_STR){
-          return respuesta == SI_STR;
+        respuesta = respuesta.ToUpper();
+          
+        if (respuesta == "SI" || respuesta == "NO"){
+          return respuesta == SI;
         }
 
         Console.WriteLine("Respuesta no valida, intente de nuevo");
       }
     }
 
+    //Con esta funcion esperamos a que el usuario presione alguna tecla para continuar
     private static ConsoleKey esperarTecla() {
       return Console.ReadKey(true).Key;
     }
 
+    //Con esta funcion unicamente mostramos el menu principal de vendedor
     private static void printMenuVendedor(){
       Console.WriteLine("¿Que opcion quieres realizar?");
       Console.WriteLine(" \tAgregar producto");
@@ -63,6 +65,7 @@ namespace Tp2AAT {
       Console.WriteLine(" \tSalir");
     }
 
+    //Cambiar el cursor (>) de lugar para poder manejarse por el menu
     private static void cambiarSeleccion(int seleccionado, int cant_opciones){
       int col = Console.CursorLeft;
       int fila = Console.CursorTop;
@@ -79,6 +82,7 @@ namespace Tp2AAT {
       Console.SetCursorPosition(col, fila);
     }
 
+    //Agregar productos al sistema
     private static void AgregarProductoMenu(){
       Console.WriteLine("Ingrese los datos del Producto");
       Console.Write("(Obligatorio)\tNombre: ");
@@ -92,6 +96,7 @@ namespace Tp2AAT {
       tienda.AgregarProducto(prod);
     }
 
+    //Eliminar productos del sistema
     private static void EliminarProductoMenu(){
       Console.Write("Nombre del producto a eliminar:");
       string nombre = Console.ReadLine();
@@ -99,11 +104,13 @@ namespace Tp2AAT {
       tienda.EliminarProducto(nombre);
     }
 
+    //Esta funcion muestra los productos y stock del sistema
     private static void printStock(){
       string stock = tienda.ContenidosComoString();
       Console.Write(stock);
     }
 
+    //Manejar los casos para el modo vendedor
     private static void ElegirAccion(int seleccionado) {
       switch(seleccionado) {
         case 0:
@@ -123,7 +130,8 @@ namespace Tp2AAT {
           break;
       }
     }
-
+    
+    //Llamar a la funcion que muestra el menu y manejar la respuesta del usuario con el teclado
     private static void MenuVendedor(){
       const int cant_opciones = 5;
       int seleccionado = 0;
@@ -152,6 +160,7 @@ namespace Tp2AAT {
       }
     }
 
+    //Mostrar el menu interactivo del cliente
     private static void printMenuCliente(List<string> productos){
       Console.WriteLine("¿Que quiere Agregar al carrito?");
 
@@ -163,6 +172,7 @@ namespace Tp2AAT {
       Console.WriteLine(" \tSalir");
     }
 
+
     private static void CambiarCantidad((int Left, int Top) locacion_cantidad, (int Left, int Top) locacion_precio, int cantidad, double precio){
       (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop);
       Console.SetCursorPosition(locacion_cantidad.Left, locacion_cantidad.Top);
@@ -173,6 +183,7 @@ namespace Tp2AAT {
       Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top);
     }
 
+    //Agregar productos al carrito
     private static void AgregarAlCarritoMenu(string nombre){
       Producto prod = tienda.ConsultarProducto(nombre);
       int cantidad_compra = 0;
@@ -216,7 +227,8 @@ namespace Tp2AAT {
         }
       } 
     }
-
+    
+    //Manejar los casos para el modo cliente
     private static void MenuCliente() {
       const int max_pagina = 10;
       List<string> productos = tienda.ConsultarNombres();
@@ -261,7 +273,6 @@ namespace Tp2AAT {
 
     public static void Main() {
       Console.WriteLine("Bienvenido a la tienda Mauricio Shop");
-      string respuesta = "";
       if (esVendedor()) {
         MenuVendedor();
       } else { 
