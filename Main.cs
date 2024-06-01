@@ -9,6 +9,31 @@ namespace Tp2AAT {
     private static Tienda tienda = new Tienda();
     private static Carrito carrito = new Carrito();
 
+
+    private static void AgregarProductosDefault(){
+      tienda.agregarProducto(new Producto("Desodorante", 5000, 50));
+      tienda.agregarProducto(new Producto("Vaso", 1000, 13));
+      tienda.agregarProducto(new Producto("Lampara", 30000, 55));
+      tienda.agregarProducto(new Producto("Vino", 10000, 38));
+      tienda.agregarProducto(new Producto("Celular", 1000000, 74));
+      tienda.agregarProducto(new Producto("Monitor", 500000, 67));
+      tienda.agregarProducto(new Producto("Panel de Vidro", 60000, 94));
+      tienda.agregarProducto(new Producto("Cinturon", 8000, 27));
+      tienda.agregarProducto(new Producto("Block de Notas", 3000, 43));
+      tienda.agregarProducto(new Producto("Tablon", 10000, 85));
+      tienda.agregarProducto(new Producto("Pajita", 700, 34));
+      tienda.agregarProducto(new Producto("Coca-Cola", 1500, 52));
+      tienda.agregarProducto(new Producto("Lapicera", 900, 91));
+      tienda.agregarProducto(new Producto("Cinta Adhesiva", 800, 16));
+      tienda.agregarProducto(new Producto("Zapatilla", 7500, 1));
+      tienda.agregarProducto(new Producto("Paraguas", 9200, 7));
+      tienda.agregarProducto(new Producto("Polo", 35000, 12));
+      tienda.agregarProducto(new Producto("Ventilador", 40000, 73));
+      tienda.agregarProducto(new Producto("Almohada", 6800, 29));
+      tienda.agregarProducto(new Producto("Sabana", 7200, 23));
+      tienda.agregarProducto(new Producto("Mochila", 6000, 89));
+    }  
+
     private static bool esVendedor(){
       while (true){
         Console.WriteLine("Quiere entrar al sistema como vendedor?");
@@ -104,25 +129,51 @@ namespace Tp2AAT {
       printMenuVendedor();
 
       while(true){
-        cambiarSeleccion(seleccionado, cant_opciones);
         ConsoleKey tecla = esperarTecla();
         switch (tecla) {
           case ConsoleKey.UpArrow:
             seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
+            cambiarSeleccion(seleccionado, cant_opciones);
             break;
           case ConsoleKey.DownArrow:
             seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
+            cambiarSeleccion(seleccionado, cant_opciones);
             break;
           case ConsoleKey.Enter:
             ElegirAccion(seleccionado);
             seleccionado = 0;
             printMenuVendedor();
+            cambiarSeleccion(seleccionado, cant_opciones);
             break;
         }
       }
     }
 
+    private static void printMenuCliente(List<string> productos){
+
+      foreach (string producto in productos) {
+        Console.WriteLine(" \t" + producto);
+      }
+      Console.WriteLine(" \tCarrito");
+      Console.WriteLine(" \tComprar");
+      Console.WriteLine(" \tSalir");
+    }
+
+    private static void menuCliente() {
+      const int max_pagina = 10;
+      int seleccionado = 0;
+      int pagina = 0;
+
+      List<string> productos = tienda.ConsultarNombres();
+      
+      Console.WriteLine("¿Que desea comprar?");
+
+
+
+    }
+
     public static void Main() {
+      AgregarProductosDefault();
       Console.WriteLine("Bienvenido a la tienda Mauricio Shop");
       string respuesta = "";
       if (esVendedor()) {

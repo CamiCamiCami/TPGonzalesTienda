@@ -25,7 +25,7 @@ namespace Tp2AAT {
     }
 
     public string ComoString(){
-      return $"{this.nombre}\t\tPrecio: {this.precio}\tStock: {this.stock}";
+      return $"Precio: {this.precio}$\t| Stock: {this.stock}\t| {this.nombre}";
     }
   
   }
