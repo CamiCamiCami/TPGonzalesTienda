@@ -4,7 +4,7 @@ using System;
 namespace Tp2AAT {
     class Tienda {
         private List<Producto> productos = new List<Producto>();
-        private double dinero = 0;
+        public double caja { get; private set; } = 0;
 
         public void agregarProducto(Producto producto){
           foreach(Producto p in productos){
@@ -22,7 +22,7 @@ namespace Tp2AAT {
                 throw new Exception("No hay suficiente stock para relaizar la venta");
               }
               p.stock -= cantidad;
-              dinero += p.precio * cantidad;
+              caja += p.precio * cantidad;
               return;
             }
           }

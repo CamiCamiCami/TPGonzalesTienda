@@ -19,14 +19,14 @@ namespace Tp2AAT {
       }
     }
 
-    public void eliminarProducto(string prod){
+    public void eliminarProducto(Producto prod){
       if(items.ContainsKey(prod)) {
         items.Remove(prod);
       }
     }
 
-    public long subtotal() {
-      long subtotal = 0;
+    public double subtotal() {
+      double subtotal = 0;
       foreach(Producto prod in items.Keys) {
         subtotal += items[prod] * prod.precio;
       }
