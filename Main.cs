@@ -16,105 +16,51 @@ namespace Tp2AAT {
     private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());
     private static Carrito carrito = new Carrito();
 
-    //Cambiar el cursor (>) de lugar para poder manejarse por el menu
-    private static void cambiarSeleccion(int seleccionado, int cant_opciones){
-      int col = Console.CursorLeft;
-      int fila = Console.CursorTop;
-
-      for (int i = 0; i < cant_opciones; i++){
-        int fila_a_cambiar = fila - cant_opciones + i;
-        Console.SetCursorPosition(0, fila_a_cambiar);
-        if (seleccionado == i) {
-          Console.Write(">");
-        } else {
-          Console.Write(" ");
-        }
-      }
-
-      Console.SetCursorPosition(col, fila);
-    }
-
     //Metodo para leer una tecla
     private static ConsoleKey esperarTecla() {
       return Console.ReadKey(true).Key;
     }
 
     //Metodo para pedir la clave al usuario
-    private static bool pedirclave(){
+    private static bool PedirAcceso(){
       int intentos = 1;
       
       Console.Write("Ingrese la contraseña: ");
-      string con_aux = Console.ReadLine();
+      string intento = "";
       
       while(intentos != 3){
-        if (con_aux == contraseña){
+        intento == Console.ReadLine();
+        intentos++;
+        if (intento == contraseña){
           return true;
         }
         else{
           Console.Write("Contraseña incorrecta, intente de nuevo: ");
-          con_aux = Console.ReadLine();
-          intentos++;
         }
       }
-        throw new Exception ("Se agotaron los intentos, el sistema fallo");
-      }
 
-    
+      return false;
+    }
+
     //Dentro del menu interactivo, esta funcion se ejecuta primero para preguntar al usuario por una contraseña
     private static bool esVendedor(){
-      int cant_opciones = 2;
-      int seleccionado = 0;
+      const string VENDEDOR_OPC = "Vendedor";
+      const string CLIENTE_OPC = "Cliente";
       
-      Console.WriteLine("Como quieres entrar al sistema?");
-      Console.WriteLine("\tModo Vendedor");
-      Console.WriteLine("\tModo Cliente");
-      cambiarSeleccion(seleccionado, cant_opciones);
-      
-      while(true) {
-      ConsoleKey tecla = esperarTecla();
-        
-      switch (tecla){
-        
-        case ConsoleKey.UpArrow:
-          seleccionado = seleccionado - 1 > 0 ? seleccionado - 1 : 0;
-          cambiarSeleccion(seleccionado, cant_opciones);
-        break;
-      
-        case ConsoleKey.DownArrow:
-          seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
-          cambiarSeleccion(seleccionado, cant_opciones);
-        break;
+      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", [VENDEDOR_OPC, CLIENTE_OPC]);
 
-         case ConsoleKey.Enter:
-          if (seleccionado == 0){
-            return pedirclave();
-          }
-          if(seleccionado==1){
-            return false;
-          }
-          break;
+      string opc = menu.EsperarEleccion();
 
-          default:
-          break;
+      if (opc == VENDEDOR_OPC) {
+        if (PedirAcceso()){
+          return true;
+        } else {
+          throw new Exception ("Se agotaron los intentos, saliendo.");
         }
-        
+      } else {
+        return false;
       }
     }
-    
-
-
-    //Con esta funcion unicamente mostramos el menu principal de vendedor
-    private static void printMenuVendedor(){
-      Console.WriteLine("¿Que opcion quieres realizar?");
-      Console.WriteLine(" \tAgregar producto");
-      Console.WriteLine(" \tEliminar producto");
-      Console.WriteLine(" \tVer listado de productos y stock");
-      Console.WriteLine(" \tVer dinero en caja");
-      Console.WriteLine(" \tSalir");
-    }
-
-    //Cambiar el cursor (>) de lugar para poder manejarse por el menu
-   
 
     //Agregar productos al sistema
     private static void AgregarProductoMenu(){
@@ -145,61 +91,39 @@ namespace Tp2AAT {
       Console.Write(stock);
     }
 
-    //Manejar los casos para el modo vendedor
-    private static void ElegirAccion(int seleccionado) {
-      switch(seleccionado) {
-        case 0:
-          AgregarProductoMenu();
-          break;
-        case 1:
-          EliminarProductoMenu();
-          break;
-        case 2:
-          printStock();
-          break;
-        case 3:
-          Console.WriteLine($"Hay {tienda.caja}$ en la caja");
-          break;
-        case 4:
-          Environment.Exit(0);
-          break;
-      }
-    }
-
-    //Llamar a la funcion que muestra el menu y manejar la respuesta del usuario con el teclado
+    //Llamar a la funcion que muestra el menu y maneja la respuesta del usuario con el teclado
     private static void MenuVendedor(){
-      const int cant_opciones = 5;
-      int seleccionado = 0;
-      printMenuVendedor();
+      const string AGREGAR_OPC = "Agregar Producto"; 
+      const string ELIMINAR_OPC = "Eliminar Producto"; 
+      const string MOSTRAR_OPC = "Mostrar Stock"; 
+      const string DINERO_OPC = "Mostrar Dinero en Caja"; 
+      const string SALIR_OPC = "Salir"; 
 
-      while(true){
-        ConsoleKey tecla = esperarTecla();
-        
-        switch (tecla) {
-          case ConsoleKey.UpArrow:
-            seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
-            cambiarSeleccion(seleccionado, cant_opciones);
+      bool bandera_salida = false;
+      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", [AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC]);
+
+      while (!bandera_salida) {
+        string opc = menu.EsperarEleccion();
+
+        switch (opc) {
+          case AGREGAR_OPC:
+            AgregarProductoMenu()
             break;
-          
-          case ConsoleKey.DownArrow:
-            seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
-            cambiarSeleccion(seleccionado, cant_opciones);
+          case ELIMINAR_OPC:
+            EliminarProductoMenu();
             break;
-          
-          case ConsoleKey.Enter:
-            ElegirAccion(seleccionado);
-            seleccionado = 0;
-            printMenuVendedor();
-            cambiarSeleccion(seleccionado, cant_opciones);
+          case MOSTRAR_OPC: 
+            printStock();
             break;
-          
-          default:
+          case DINERO_OPC:
+            Console.WriteLine($"Hay {tienda.caja}$ en la caja");
+            break;
+          case SALIR_OPC:
+            bandera_salida = true;
             break;
         }
       }
     }
-
-
   
     //Mostrar el menu interactivo del cliente
     private static void printMenuCliente(List<string> productos){
