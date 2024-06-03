@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using System;
 
-using System.Collections.Generic;
-using System;
-
 
 namespace Tp2AAT {
 
@@ -29,7 +26,7 @@ namespace Tp2AAT {
       string intento = "";
       
       while(intentos != 3){
-        intento == Console.ReadLine();
+        intento = Console.ReadLine();
         intentos++;
         if (intento == contraseña){
           return true;
@@ -46,9 +43,9 @@ namespace Tp2AAT {
     private static bool esVendedor(){
       const string VENDEDOR_OPC = "Vendedor";
       const string CLIENTE_OPC = "Cliente";
-      
-      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", new string[] {VENDEDOR_OPC, CLIENTE_OPC});
 
+      List<string> opciones = new List<string>(){VENDEDOR_OPC, CLIENTE_OPC};
+      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", opciones);
       string opc = menu.EsperarEleccion();
 
       if (opc == VENDEDOR_OPC) {
@@ -100,7 +97,8 @@ namespace Tp2AAT {
       const string SALIR_OPC = "Salir"; 
 
       bool bandera_salida = false;
-      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", new string[] {AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC});
+      List<string> opciones = new List<string>(){AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC};
+      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", opciones);
 
       while (!bandera_salida) {
         string opc = menu.EsperarEleccion();
@@ -137,79 +135,17 @@ namespace Tp2AAT {
     }
 
     //Metodo para cambiar la cantidad y el precio del producto para agregar al carrito
-    private static void CambiarCantidad((int Left, int Top) locacion_cantidad, (int Left, int Top) locacion_precio, int cantidad, double precio){
-      (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //guardar la posicion del cursor actual 
-      Console.SetCursorPosition(locacion_cantidad.Left, locacion_cantidad.Top);
-      Console.Write(cantidad + " > "); //actualizar la cantidad 
-      Console.SetCursorPosition(locacion_precio.Left, locacion_precio.Top);
-      Console.Write(cantidad * precio + "$) "); //actualizar el precio 
-      //Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft)); 
-      Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top);
-    }
+    
 
     //Metodo para agregar productos al carrito
-    private static void AgregarAlCarritoMenu(string nombre){
+    private static void AgregarAlCarrito(string nombre){
       Producto prod = tienda.ConsultarProducto(nombre); //Buscar el producto en la lista de productos de la tienda
-      int cantidad_compra = 0;
-      int seleccionado = 0;
-      int pos_cantidad, pos_precio;
       
-      Console.WriteLine("");
-      Console.WriteLine($"{nombre}\t\t{prod.precio}$");
-      Console.Write(" \t< "); 
-      pos_cantidad= Console.CursorLeft ; //Guarda la posicion del cursor donde se ingreso la cantidad de compra 
-      Console.WriteLine(cantidad_compra + " >");
-      Console.Write(" \tAgregar al carrito ("); 
-      pos_precio = Console.CursorLeft; //Guarda la posicion del cursor donde se ingresa el precio del total
-      Console.WriteLine((prod.precio * cantidad_compra) + "$)");
-      Console.WriteLine(" \tCancelar");
+      AgregarAlCarritoMenu menu = new AgregarAlCarritoMenu(prod);
 
-      cambiarSeleccion(seleccionado, 3);
-      int bandera_salida = 0;
-      
-      while(bandera_salida == 0) {
-        ConsoleKey tecla = esperarTecla();
-        
-        switch (tecla) {
-          
-          case ConsoleKey.UpArrow:
-            seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
-            cambiarSeleccion(seleccionado, 3);
-            break;
-          
-          case ConsoleKey.DownArrow:
-            seleccionado = seleccionado + 1 < 3 ? seleccionado + 1 : 3 - 1;
-            cambiarSeleccion(seleccionado, 3);
-            break;
-          
-          case ConsoleKey.LeftArrow:
-            if (seleccionado == 0) {
-              cantidad_compra = cantidad_compra - 1 >= 0 ? cantidad_compra - 1 : 0;
-              CambiarCantidad((pos_cantidad, Console.CursorTop - 3), (pos_precio, Console.CursorTop - 2), cantidad_compra, prod.precio);
-            }
-            break;
-          
-          case ConsoleKey.RightArrow:
-            if (seleccionado == 0) {
-              cantidad_compra = cantidad_compra + 1;
-              CambiarCantidad((pos_cantidad, Console.CursorTop - 3), (pos_precio, Console.CursorTop - 2), cantidad_compra, prod.precio);
-            }
-            break;
-          
-          case ConsoleKey.Enter:
-            if (seleccionado == 1){
-              carrito.agregarProducto(prod, cantidad_compra);
-              bandera_salida =+ 1;
-              }
-            if(seleccionado == 2){
-              bandera_salida =+ 1;
-            }
-            break;
-          
-          default:
-            break;
-        }
-      } 
+      int cantidad_compra = menu.EsperarCantidad();
+
+      carrito.agregarProducto(prod, cantidad_compra);
     }
 
     private static void CajaMenu(Carrito carrito){
@@ -230,51 +166,24 @@ namespace Tp2AAT {
       const string SALIR_OPC = "Salir";
       const string CAJA_OPC = "Ir a la Caja";
       List<string> productos = tienda.ConsultarNombres();
-      List<string> opciones = new List
+      
 
+      List<string> opciones = new List<string>(productos);
+      opciones.Add(SALIR_OPC);
+      opciones.Add(CAJA_OPC);
+      MenuSeleccionable menu = new MenuSeleccionable("Que quiere agregar al carrito", opciones);
 
-      MenuSeleccionable menu = new MenuSeleccionable("Que quiere agregar al carrito", )
+      bool bandera_salida = false;
+      while (!bandera_salida) {
+        string opc = menu.EsperarEleccion();
 
-      printMenuCliente(productos);
-      cambiarSeleccion(0, cant_opciones);
-
-      int bandera_salida = 0;
-      while(bandera_salida == 0) {
-        ConsoleKey tecla = esperarTecla();
-
-        switch (tecla) {
-          
-          case ConsoleKey.UpArrow:
-            seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
-            cambiarSeleccion(seleccionado, cant_opciones);
-            break;
-          
-          case ConsoleKey.DownArrow:
-            seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
-            cambiarSeleccion(seleccionado, cant_opciones);
-            break;
-          
-            case ConsoleKey.Enter:
-            if (seleccionado < productos.Count){
-                AgregarAlCarritoMenu(productos[seleccionado]);
-                printMenuCliente(productos);
-                cambiarSeleccion(0, cant_opciones);
-            }
-          
-            if (seleccionado == cant_opciones - 2) {
-                CajaMenu(carrito);
-                bandera_salida += 1;
-            }
-            
-            if(seleccionado == cant_opciones - 1) { 
-                bandera_salida += 1;
-            }
-            break;
-          
-            
-            
-          default:
-            break;
+        if(opc == SALIR_OPC) {
+          bandera_salida = true;
+        } else if (opc == CAJA_OPC) {
+          CajaMenu(carrito);
+          bandera_salida = true;
+        } else {
+          AgregarAlCarrito(opc);
         }
       }
     }

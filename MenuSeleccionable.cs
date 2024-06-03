@@ -1,7 +1,10 @@
+using System.Collections.Generic;
+using System;
+
 namespace Tp2AAT {
     class MenuSeleccionable {
         private List<string> Opciones = new List<string>();
-        public int CantOpciones { get, private set };
+        public int CantOpciones { get; private set; }
         private string Titulo;
         private int Seleccionado = 0;
 
@@ -10,8 +13,8 @@ namespace Tp2AAT {
         }
 
         public MenuSeleccionable(string titulo_menu, List<string> opciones_menu) {
-            foreach(string opc in opciones) {
-                opciones.Add(opc);
+            foreach(string opc in opciones_menu) {
+                this.Opciones.Add(opc);
             }
             this.CantOpciones = opciones_menu.Count;
             this.Titulo = titulo_menu;
@@ -50,12 +53,12 @@ namespace Tp2AAT {
         
                 switch (tecla) {
                     case ConsoleKey.UpArrow:
-                        seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
+                        this.Seleccionado = this.Seleccionado - 1 >= 0 ? this.Seleccionado - 1 : 0;
                         PrintCambioSeleccion();
                         break;
           
                     case ConsoleKey.DownArrow:
-                        seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
+                        this.Seleccionado = this.Seleccionado + 1 < this.CantOpciones ? this.Seleccionado + 1 : this.CantOpciones - 1;
                         PrintCambioSeleccion();
                         break;
           
