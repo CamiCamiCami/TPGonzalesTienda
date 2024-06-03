@@ -1,50 +1,26 @@
 using System.Collections.Generic;
 using System;
 
+using System.Collections.Generic;
+using System;
+
 
 namespace Tp2AAT {
 
   class Program {
-
+    
+    //Contraseña para el modo vendedor
+    private const string contraseña = "TpAAT";
+  
     //Creamos los objetos de tienda y carrito para el uso de programa
     private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());
     private static Carrito carrito = new Carrito();
-    
-    //Dentro del menu interactivo, esta funcion se ejecuta primero para preguntar al usuario si es vendedor o comprador
-    private static bool esVendedor(){
-      while (true){
-        Console.WriteLine("Quiere entrar al sistema como vendedor?");
-        string respuesta = Console.ReadLine();
-        respuesta = respuesta.ToUpper();
-
-        if (respuesta == "SI" || respuesta == "NO"){
-          return respuesta == "SI";
-        }
-
-        Console.WriteLine("Respuesta no valida, intente de nuevo");
-      }
-    }
-
-    //Con esta funcion esperamos a que el usuario presione alguna tecla para continuar
-    private static ConsoleKey esperarTecla() {
-      return Console.ReadKey(true).Key;
-    }
-
-    //Con esta funcion unicamente mostramos el menu principal de vendedor
-    private static void printMenuVendedor(){
-      Console.WriteLine("¿Que opcion quieres realizar?");
-      Console.WriteLine(" \tAgregar producto");
-      Console.WriteLine(" \tEliminar producto");
-      Console.WriteLine(" \tVer listado de productos y stock");
-      Console.WriteLine(" \tVer dinero en caja");
-      Console.WriteLine(" \tSalir");
-    }
 
     //Cambiar el cursor (>) de lugar para poder manejarse por el menu
     private static void cambiarSeleccion(int seleccionado, int cant_opciones){
       int col = Console.CursorLeft;
       int fila = Console.CursorTop;
-      
+
       for (int i = 0; i < cant_opciones; i++){
         int fila_a_cambiar = fila - cant_opciones + i;
         Console.SetCursorPosition(0, fila_a_cambiar);
@@ -57,6 +33,88 @@ namespace Tp2AAT {
 
       Console.SetCursorPosition(col, fila);
     }
+
+    //Metodo para leer una tecla
+    private static ConsoleKey esperarTecla() {
+      return Console.ReadKey(true).Key;
+    }
+
+    //Metodo para pedir la clave al usuario
+    private static bool pedirclave(){
+      int intentos = 1;
+      
+      Console.Write("Ingrese la contraseña: ");
+      string con_aux = Console.ReadLine();
+      
+      while(intentos != 3){
+        if (con_aux == contraseña){
+          return true;
+        }
+        else{
+          Console.Write("Contraseña incorrecta, intente de nuevo: ");
+          con_aux = Console.ReadLine();
+          intentos++;
+        }
+      }
+        throw new Exception ("Se agotaron los intentos, el sistema fallo");
+      }
+
+    
+    //Dentro del menu interactivo, esta funcion se ejecuta primero para preguntar al usuario por una contraseña
+    private static bool esVendedor(){
+      int cant_opciones = 2;
+      int seleccionado = 0;
+      
+      Console.WriteLine("Como quieres entrar al sistema?");
+      Console.WriteLine("\tModo Vendedor");
+      Console.WriteLine("\tModo Cliente");
+      cambiarSeleccion(seleccionado, cant_opciones);
+      
+      while(true) {
+      ConsoleKey tecla = esperarTecla();
+        
+      switch (tecla){
+        
+        case ConsoleKey.UpArrow:
+          seleccionado = seleccionado - 1 > 0 ? seleccionado - 1 : 0;
+          cambiarSeleccion(seleccionado, cant_opciones);
+        break;
+      
+        case ConsoleKey.DownArrow:
+          seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
+          cambiarSeleccion(seleccionado, cant_opciones);
+        break;
+
+         case ConsoleKey.Enter:
+          if (seleccionado == 0){
+            return pedirclave();
+          }
+          if(seleccionado==1){
+            return false;
+          }
+          break;
+
+          default:
+          break;
+        }
+        
+      }
+    }
+    
+
+
+    //Con esta funcion unicamente mostramos el menu principal de vendedor
+    private static void printMenuVendedor(){
+      Console.WriteLine("¿Que opcion quieres realizar?");
+      Console.WriteLine(" \tAgregar producto");
+      Console.WriteLine(" \tEliminar producto");
+      Console.WriteLine(" \tVer listado de productos y stock");
+      Console.WriteLine(" \tVer dinero en caja");
+      Console.WriteLine(" \tSalir");
+    }
+
+    //Cambiar el cursor (>) de lugar para poder manejarse por el menu
+   
 
     //Agregar productos al sistema
     private static void AgregarProductoMenu(){
@@ -295,11 +353,34 @@ namespace Tp2AAT {
 
     public static void Main() {
       Console.WriteLine("Bienvenido a la tienda Mauricio Shop");
-      if (esVendedor()) {
-        MenuVendedor();
-      } else { 
-        MenuCliente();
+      int bandera_salida = 0;
+      
+      while (bandera_salida == 0){
+        if (esVendedor()) {
+          MenuVendedor();
+        } 
+        else { 
+          MenuCliente();
+        }
+        
+        Console.WriteLine("¿Quieres seguir navegando? (s/n)");
+        string salir = Console.ReadLine();
+        
+        if(salir.ToUpper() == "S" || salir.ToUpper() == "N"){
+          if(salir.ToUpper() == "N"){
+            bandera_salida += 1;
+          }
+        }   
+        else{
+          throw new Exception("Opcion no valida");
+        }    
+       }   
       }
+     }
+    }
+  
+
+
     }
   }
 }
