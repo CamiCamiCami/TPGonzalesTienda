@@ -47,7 +47,7 @@ namespace Tp2AAT {
       const string VENDEDOR_OPC = "Vendedor";
       const string CLIENTE_OPC = "Cliente";
       
-      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", [VENDEDOR_OPC, CLIENTE_OPC]);
+      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", new string[] {VENDEDOR_OPC, CLIENTE_OPC});
 
       string opc = menu.EsperarEleccion();
 
@@ -100,14 +100,14 @@ namespace Tp2AAT {
       const string SALIR_OPC = "Salir"; 
 
       bool bandera_salida = false;
-      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", [AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC]);
+      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", new string[] {AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC});
 
       while (!bandera_salida) {
         string opc = menu.EsperarEleccion();
 
         switch (opc) {
           case AGREGAR_OPC:
-            AgregarProductoMenu()
+            AgregarProductoMenu();
             break;
           case ELIMINAR_OPC:
             EliminarProductoMenu();
@@ -226,9 +226,14 @@ namespace Tp2AAT {
   
     //Manejar los casos para el modo cliente
     private static void MenuCliente() {
+
+      const string SALIR_OPC = "Salir";
+      const string CAJA_OPC = "Ir a la Caja";
       List<string> productos = tienda.ConsultarNombres();
-      int cant_opciones = productos.Count + 2;
-      int seleccionado = 0;
+      List<string> opciones = new List
+
+
+      MenuSeleccionable menu = new MenuSeleccionable("Que quiere agregar al carrito", )
 
       printMenuCliente(productos);
       cambiarSeleccion(0, cant_opciones);
