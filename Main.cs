@@ -358,8 +358,7 @@ namespace Tp2AAT {
       while (bandera_salida == 0){
         if (esVendedor()) {
           MenuVendedor();
-        } 
-        else { 
+        } else { 
           MenuCliente();
         }
         
@@ -370,17 +369,10 @@ namespace Tp2AAT {
           if(salir.ToUpper() == "N"){
             bandera_salida += 1;
           }
-        }   
-        else{
+        } else {
           throw new Exception("Opcion no valida");
         }    
-       }   
-      }
-     }
-    }
-  
-
-
+      }   
     }
   }
 }
