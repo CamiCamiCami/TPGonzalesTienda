@@ -1,49 +1,24 @@
-using System;
 using System.Collections.Generic;
+using System;
+
 
 namespace Tp2AAT {
 
   class Program {
-    
+
     //Creamos los objetos de tienda y carrito para el uso de programa
-    private static Tienda tienda = AgregarProductosDefault(new Tienda());
+    private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());
     private static Carrito carrito = new Carrito();
-
-    //Creamos algunos objetos de producto para agregarlos a la tienda y que esten por default en el sistema
-    private static Tienda AgregarProductosDefault(Tienda _tienda){
-      _tienda.AgregarProducto(new Producto("Desodorante", 5000, 50));
-      _tienda.AgregarProducto(new Producto("Vaso", 1000, 13));
-      _tienda.AgregarProducto(new Producto("Lampara", 30000, 55));
-      _tienda.AgregarProducto(new Producto("Vino", 10000, 38));
-      _tienda.AgregarProducto(new Producto("Celular", 1000000, 74));
-      _tienda.AgregarProducto(new Producto("Monitor", 500000, 67));
-      _tienda.AgregarProducto(new Producto("Panel de Vidro", 60000, 94));
-      _tienda.AgregarProducto(new Producto("Cinturon", 8000, 27));
-      _tienda.AgregarProducto(new Producto("Block de Notas", 3000, 43));
-      _tienda.AgregarProducto(new Producto("Tablon", 10000, 85));
-      _tienda.AgregarProducto(new Producto("Pajita", 700, 34));
-      _tienda.AgregarProducto(new Producto("Coca-Cola", 1500, 52));
-      _tienda.AgregarProducto(new Producto("Lapicera", 900, 91));
-      _tienda.AgregarProducto(new Producto("Cinta Adhesiva", 800, 16));
-      _tienda.AgregarProducto(new Producto("Zapatilla", 7500, 1));
-      _tienda.AgregarProducto(new Producto("Paraguas", 9200, 7));
-      _tienda.AgregarProducto(new Producto("Polo", 35000, 12));
-      _tienda.AgregarProducto(new Producto("Ventilador", 40000, 73));
-      _tienda.AgregarProducto(new Producto("Almohada", 6800, 29));
-      _tienda.AgregarProducto(new Producto("Sabana", 7200, 23));
-      _tienda.AgregarProducto(new Producto("Mochila", 6000, 89));
-      return _tienda;
-    }  
-
+    
     //Dentro del menu interactivo, esta funcion se ejecuta primero para preguntar al usuario si es vendedor o comprador
     private static bool esVendedor(){
       while (true){
         Console.WriteLine("Quiere entrar al sistema como vendedor?");
         string respuesta = Console.ReadLine();
         respuesta = respuesta.ToUpper();
-          
+
         if (respuesta == "SI" || respuesta == "NO"){
-          return respuesta == SI;
+          return respuesta == "SI";
         }
 
         Console.WriteLine("Respuesta no valida, intente de nuevo");
@@ -69,6 +44,7 @@ namespace Tp2AAT {
     private static void cambiarSeleccion(int seleccionado, int cant_opciones){
       int col = Console.CursorLeft;
       int fila = Console.CursorTop;
+      
       for (int i = 0; i < cant_opciones; i++){
         int fila_a_cambiar = fila - cant_opciones + i;
         Console.SetCursorPosition(0, fila_a_cambiar);
@@ -78,7 +54,7 @@ namespace Tp2AAT {
           Console.Write(" ");
         }
       }
-          
+
       Console.SetCursorPosition(col, fila);
     }
 
@@ -92,7 +68,7 @@ namespace Tp2AAT {
       Console.Write("\t\tStock: ");
       string stock = Console.ReadLine();
 
-      Producto prod = new Producto(nombre, Double.Parse(costo), Int64.Parse(stock));
+      Producto prod = new Producto(nombre, float.Parse(costo), int.Parse(stock));
       tienda.AgregarProducto(prod);
     }
 
@@ -102,11 +78,12 @@ namespace Tp2AAT {
       string nombre = Console.ReadLine();
 
       tienda.EliminarProducto(nombre);
+      Console.WriteLine($"El producto {nombre} ha sido eliminado del sistema");
     }
 
     //Esta funcion muestra los productos y stock del sistema
     private static void printStock(){
-      string stock = tienda.ContenidosComoString();
+      string stock = tienda.ObtenerStock();
       Console.Write(stock);
     }
 
@@ -130,7 +107,7 @@ namespace Tp2AAT {
           break;
       }
     }
-    
+
     //Llamar a la funcion que muestra el menu y manejar la respuesta del usuario con el teclado
     private static void MenuVendedor(){
       const int cant_opciones = 5;
@@ -139,27 +116,33 @@ namespace Tp2AAT {
 
       while(true){
         ConsoleKey tecla = esperarTecla();
+        
         switch (tecla) {
           case ConsoleKey.UpArrow:
             seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
             cambiarSeleccion(seleccionado, cant_opciones);
             break;
+          
           case ConsoleKey.DownArrow:
             seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
             cambiarSeleccion(seleccionado, cant_opciones);
             break;
+          
           case ConsoleKey.Enter:
             ElegirAccion(seleccionado);
             seleccionado = 0;
             printMenuVendedor();
             cambiarSeleccion(seleccionado, cant_opciones);
             break;
+          
           default:
             break;
         }
       }
     }
 
+
+  
     //Mostrar el menu interactivo del cliente
     private static void printMenuCliente(List<string> productos){
       Console.WriteLine("¿Que quiere Agregar al carrito?");
@@ -167,109 +150,148 @@ namespace Tp2AAT {
       foreach (string producto in productos) {
         Console.WriteLine(" \t" + producto);
       }
-      Console.WriteLine(" \tCarrito");
-      Console.WriteLine(" \tComprar");
+      Console.WriteLine(" \tIr a caja");
       Console.WriteLine(" \tSalir");
     }
 
-
+    //Metodo para cambiar la cantidad y el precio del producto para agregar al carrito
     private static void CambiarCantidad((int Left, int Top) locacion_cantidad, (int Left, int Top) locacion_precio, int cantidad, double precio){
-      (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop);
+      (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //guardar la posicion del cursor actual 
       Console.SetCursorPosition(locacion_cantidad.Left, locacion_cantidad.Top);
-      Console.Write(cantidad + " > ");
+      Console.Write(cantidad + " > "); //actualizar la cantidad 
       Console.SetCursorPosition(locacion_precio.Left, locacion_precio.Top);
-      Console.Write(cantidad * precio + "$) ");
-      Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft)); 
+      Console.Write(cantidad * precio + "$) "); //actualizar el precio 
+      //Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft)); 
       Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top);
     }
 
-    //Agregar productos al carrito
+    //Metodo para agregar productos al carrito
     private static void AgregarAlCarritoMenu(string nombre){
-      Producto prod = tienda.ConsultarProducto(nombre);
+      Producto prod = tienda.ConsultarProducto(nombre); //Buscar el producto en la lista de productos de la tienda
       int cantidad_compra = 0;
       int seleccionado = 0;
-      int cantidad_left_pos, precio_left_pos;
+      int pos_cantidad, pos_precio;
+      
       Console.WriteLine("");
       Console.WriteLine($"{nombre}\t\t{prod.precio}$");
-
-      Console.Write(" \t< "); cantidad_left_pos = Console.CursorLeft ; Console.WriteLine(cantidad_compra + " >");
-      Console.Write(" \tAgregar al carrito ("); precio_left_pos = Console.CursorLeft; Console.WriteLine((prod.precio * cantidad_compra) + "$)");
+      Console.Write(" \t< "); 
+      pos_cantidad= Console.CursorLeft ; //Guarda la posicion del cursor donde se ingreso la cantidad de compra 
+      Console.WriteLine(cantidad_compra + " >");
+      Console.Write(" \tAgregar al carrito ("); 
+      pos_precio = Console.CursorLeft; //Guarda la posicion del cursor donde se ingresa el precio del total
+      Console.WriteLine((prod.precio * cantidad_compra) + "$)");
       Console.WriteLine(" \tCancelar");
 
       cambiarSeleccion(seleccionado, 3);
-      while(true) {
+      int bandera_salida = 0;
+      
+      while(bandera_salida == 0) {
         ConsoleKey tecla = esperarTecla();
+        
         switch (tecla) {
+          
           case ConsoleKey.UpArrow:
             seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
             cambiarSeleccion(seleccionado, 3);
             break;
+          
           case ConsoleKey.DownArrow:
             seleccionado = seleccionado + 1 < 3 ? seleccionado + 1 : 3 - 1;
             cambiarSeleccion(seleccionado, 3);
             break;
+          
           case ConsoleKey.LeftArrow:
             if (seleccionado == 0) {
               cantidad_compra = cantidad_compra - 1 >= 0 ? cantidad_compra - 1 : 0;
-              CambiarCantidad((cantidad_left_pos, Console.CursorTop - 3), (precio_left_pos, Console.CursorTop - 2), cantidad_compra, prod.precio);
+              CambiarCantidad((pos_cantidad, Console.CursorTop - 3), (pos_precio, Console.CursorTop - 2), cantidad_compra, prod.precio);
             }
             break;
+          
           case ConsoleKey.RightArrow:
             if (seleccionado == 0) {
               cantidad_compra = cantidad_compra + 1;
-              CambiarCantidad((cantidad_left_pos, Console.CursorTop - 3), (precio_left_pos, Console.CursorTop - 2), cantidad_compra, prod.precio);
+              CambiarCantidad((pos_cantidad, Console.CursorTop - 3), (pos_precio, Console.CursorTop - 2), cantidad_compra, prod.precio);
             }
             break;
+          
           case ConsoleKey.Enter:
+            if (seleccionado == 1){
+              carrito.agregarProducto(prod, cantidad_compra);
+              bandera_salida =+ 1;
+              }
+            if(seleccionado == 2){
+              bandera_salida =+ 1;
+            }
             break;
+          
           default:
             break;
         }
       } 
     }
-    
+
+    private static void CajaMenu(Carrito carrito){
+      float vuelto = 0;
+      
+      Console.WriteLine($"Subtotal: {carrito.subtotal()}$");
+      Console.Write("Con cuanto va a pagar?");
+      string pago = Console.ReadLine();
+      
+      vuelto = tienda.VenderProducto(carrito.items, int.Parse(pago));
+      
+      Console.WriteLine($"Muchas gracias por su compra, su vuelto es {vuelto}$");
+    }
+  
     //Manejar los casos para el modo cliente
     private static void MenuCliente() {
-      const int max_pagina = 10;
       List<string> productos = tienda.ConsultarNombres();
-      int cant_opciones = productos.Count + 3;
+      int cant_opciones = productos.Count + 2;
       int seleccionado = 0;
-      int pagina = 0;
 
       printMenuCliente(productos);
       cambiarSeleccion(0, cant_opciones);
 
-      while(true) {
+      int bandera_salida = 0;
+      while(bandera_salida == 0) {
         ConsoleKey tecla = esperarTecla();
 
         switch (tecla) {
+          
           case ConsoleKey.UpArrow:
             seleccionado = seleccionado - 1 >= 0 ? seleccionado - 1 : 0;
             cambiarSeleccion(seleccionado, cant_opciones);
             break;
+          
           case ConsoleKey.DownArrow:
             seleccionado = seleccionado + 1 < cant_opciones ? seleccionado + 1 : cant_opciones - 1;
             cambiarSeleccion(seleccionado, cant_opciones);
             break;
-          case ConsoleKey.Enter:
-            if (seleccionado < productos.Count) {
-              AgregarAlCarritoMenu(productos[seleccionado]);
-            } else if (seleccionado == cant_opciones - 2) {
-
-            } else if (seleccionado == cant_opciones - 1) {
-
-            } else {
-
+          
+            case ConsoleKey.Enter:
+            if (seleccionado < productos.Count){
+                AgregarAlCarritoMenu(productos[seleccionado]);
+                printMenuCliente(productos);
+                cambiarSeleccion(0, cant_opciones);
+            }
+          
+            if (seleccionado == cant_opciones - 2) {
+                CajaMenu(carrito);
+                bandera_salida += 1;
+            }
+            
+            if(seleccionado == cant_opciones - 1) { 
+                bandera_salida += 1;
             }
             break;
+          
+            
+            
           default:
             break;
         }
-
       }
-
-
     }
+  
 
     public static void Main() {
       Console.WriteLine("Bienvenido a la tienda Mauricio Shop");
