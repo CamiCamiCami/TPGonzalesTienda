@@ -13,11 +13,6 @@ namespace Tp2AAT {
     private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());
     private static Carrito carrito = new Carrito();
 
-    //Metodo para leer una tecla
-    private static ConsoleKey esperarTecla() {
-      return Console.ReadKey(true).Key;
-    }
-
     //Metodo para pedir la clave al usuario
     private static bool PedirAcceso(){
       int intentos = 1;
@@ -45,7 +40,7 @@ namespace Tp2AAT {
       const string CLIENTE_OPC = "Cliente";
 
       List<string> opciones = new List<string>(){VENDEDOR_OPC, CLIENTE_OPC};
-      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", opciones);
+      MenuGenerico menu = new MenuGenerico("Como quieres entrar al sistema?", opciones);
       string opc = menu.EsperarEleccion();
 
       if (opc == VENDEDOR_OPC) {
@@ -98,7 +93,7 @@ namespace Tp2AAT {
 
       bool bandera_salida = false;
       List<string> opciones = new List<string>(){AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC};
-      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", opciones);
+      MenuGenerico menu = new MenuGenerico("¿Que opcion quieres realizar?", opciones);
 
       while (!bandera_salida) {
         string opc = menu.EsperarEleccion();
@@ -171,7 +166,7 @@ namespace Tp2AAT {
       List<string> opciones = new List<string>(productos);
       opciones.Add(SALIR_OPC);
       opciones.Add(CAJA_OPC);
-      MenuSeleccionable menu = new MenuSeleccionable("Que quiere agregar al carrito", opciones);
+      MenuGenerico menu = new MenuGenerico("Que quiere agregar al carrito", opciones);
 
       bool bandera_salida = false;
       while (!bandera_salida) {
