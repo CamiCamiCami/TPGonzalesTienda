@@ -2,37 +2,58 @@ using System.Collections.Generic;
 using System;
 
 namespace Tp2AAT {
-    class AgregarAlCarritoMenu : MenuSeleccionable {
+    class AgregarAlCarritoMenu {
         private int Unidades = 0;
         private Producto ProductoCompra;
+        public int Seleccionado = 0;
         private (int Left, int Top) CantidadPosCursor;
         private (int Left, int Top) PrecioPosCursor;
 
-        public AgregarAlCarritoMenu(Producto prod) {
-            this.ProductoCompra = prod;
-            this.CantOpciones = 3;
+        private static ConsoleKey EsperarTecla() {
+            return Console.ReadKey(true).Key;
         }
 
-        public override void PrintOpciones() {
+        public AgregarAlCarritoMenu(Producto prod, int cantidad_inicial = 0) {
+            this.ProductoCompra = prod;
+            this.Unidades = cantidad_inicial;
+        }
+
+        private void PrintCambioSeleccion(){
+            const int CantOpciones = 3;
+            int col_guardado = Console.CursorLeft;
+            int fila_guardado = Console.CursorTop;
+
+            for (int i = 0; i < CantOpciones; i++) {
+                int fila_a_cambiar = fila_guardado - CantOpciones + i;
+                Console.SetCursorPosition(0, fila_a_cambiar);
+                if (this.Seleccionado == i) {
+                    Console.Write(">");
+                } else {
+                    Console.Write(" ");
+                }
+            }
+            Console.SetCursorPosition(col_guardado, fila_guardado);
+        }
+
+        private void PrintOpciones() {
             // Titulo
             Console.WriteLine($"¿Cuantas unidades de {this.ProductoCompra.nombre} quiere llevar?");
             // Primera Opcion - Elegir Cantidad
             Console.Write(" \t< ");
             this.CantidadPosCursor.Left = Console.CursorLeft;
-            Console.WriteLine("0 > ");
+            Console.WriteLine(this.Unidades + " > ");
             // Segunda Opcion - Agregar 
             Console.Write(" \tAgregar al Carrito (");
             this.PrecioPosCursor.Left = Console.CursorLeft;
-            Console.WriteLine("0$)");
+            Console.WriteLine((this.Unidades * this.ProductoCompra.precio) + "$)");
             // Tercera Opcion - Cancelar
             Console.WriteLine(" \tCancelar");
-        }
-
-        public void PrintCambioUnidades(){
             this.CantidadPosCursor.Top = Console.CursorTop - 3;
             this.PrecioPosCursor.Top = Console.CursorTop - 2;
-            (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //guardar la posicion del cursor actual
+        }
 
+        private void PrintCambioUnidades(){
+            (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //guardar la posicion del cursor actual
             Console.SetCursorPosition(this.CantidadPosCursor.Left, this.CantidadPosCursor.Top);
             Console.Write(this.Unidades + " > "); //actualizar la cantidad 
             Console.SetCursorPosition(this.PrecioPosCursor.Left, this.PrecioPosCursor.Top);

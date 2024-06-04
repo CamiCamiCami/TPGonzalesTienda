@@ -5,12 +5,8 @@ using System;
 namespace Tp2AAT {
 
   class Program {
-    
-    //Contraseña para el modo vendedor
-    private const string contraseña = "TpAAT";
-  
-    //Creamos los objetos de tienda y carrito para el uso de programa
-    private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());
+    private const string contraseña = "TpAAT";  //Contraseña para el modo vendedor
+    private static Tienda tienda = Tienda.AgregarProductosDefault(new Tienda());  //Creamos los objetos de tienda y carrito para el uso de programa
     private static Carrito carrito = new Carrito();
 
     //Metodo para pedir la clave al usuario
@@ -38,9 +34,9 @@ namespace Tp2AAT {
     private static bool esVendedor(){
       const string VENDEDOR_OPC = "Vendedor";
       const string CLIENTE_OPC = "Cliente";
-
       List<string> opciones = new List<string>(){VENDEDOR_OPC, CLIENTE_OPC};
-      MenuGenerico menu = new MenuGenerico("Como quieres entrar al sistema?", opciones);
+      MenuSeleccionable menu = new MenuSeleccionable("Como quieres entrar al sistema?", opciones);
+      
       string opc = menu.EsperarEleccion();
 
       if (opc == VENDEDOR_OPC) {
@@ -90,11 +86,10 @@ namespace Tp2AAT {
       const string MOSTRAR_OPC = "Mostrar Stock"; 
       const string DINERO_OPC = "Mostrar Dinero en Caja"; 
       const string SALIR_OPC = "Salir"; 
+      List<string> opciones = new List<string>(){AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC};
+      MenuSeleccionable menu = new MenuSeleccionable("¿Que opcion quieres realizar?", opciones);
 
       bool bandera_salida = false;
-      List<string> opciones = new List<string>(){AGREGAR_OPC, ELIMINAR_OPC, MOSTRAR_OPC, DINERO_OPC, SALIR_OPC};
-      MenuGenerico menu = new MenuGenerico("¿Que opcion quieres realizar?", opciones);
-
       while (!bandera_salida) {
         string opc = menu.EsperarEleccion();
 
@@ -117,42 +112,79 @@ namespace Tp2AAT {
         }
       }
     }
-  
-    //Mostrar el menu interactivo del cliente
-    private static void printMenuCliente(List<string> productos){
-      Console.WriteLine("¿Que quiere Agregar al carrito?");
-
-      foreach (string producto in productos) {
-        Console.WriteLine(" \t" + producto);
-      }
-      Console.WriteLine(" \tIr a caja");
-      Console.WriteLine(" \tSalir");
-    }
-
-    //Metodo para cambiar la cantidad y el precio del producto para agregar al carrito
     
 
     //Metodo para agregar productos al carrito
     private static void AgregarAlCarrito(string nombre){
       Producto prod = tienda.ConsultarProducto(nombre); //Buscar el producto en la lista de productos de la tienda
-      
-      AgregarAlCarritoMenu menu = new AgregarAlCarritoMenu(prod);
+      AgregarAlCarritoMenu menu;
+      if (carrito.Items.ContainsKey(prod)) {
+        menu = new AgregarAlCarritoMenu(prod, carrito.Items[prod]);
+      } else {
+        menu = new AgregarAlCarritoMenu(prod);
+      }
 
       int cantidad_compra = menu.EsperarCantidad();
 
       carrito.agregarProducto(prod, cantidad_compra);
     }
 
-    private static void CajaMenu(Carrito carrito){
-      float vuelto = 0;
+    private static void CajaMenu(){
+      const string PROCEDER_OPC = "Proceder con el Pago";
+      const string CANCELAR_OPC = "Cancelar la Compra";
+      List<Producto> contenidos_carrito = carrito.ProductosEnCarrito();
+      List<string> opciones = new List<string>();
+      foreach (Producto prod in contenidos_carrito) {
+        opciones.Add("X " + prod.nombre + "\t\t" + carrito.CantidadEnCarrito(prod)); // Da formato a las opciones
+      }
+      opciones.Add(PROCEDER_OPC);
+      opciones.Add(CANCELAR_OPC);
       
-      Console.WriteLine($"Subtotal: {carrito.subtotal()}$");
-      Console.Write("Con cuanto va a pagar?");
-      string pago = Console.ReadLine();
-      
-      vuelto = tienda.VenderProducto(carrito.items, int.Parse(pago));
-      
-      Console.WriteLine($"Muchas gracias por su compra, su vuelto es {vuelto}$");
+      bool bandera_salida = false;
+
+      while(!bandera_salida) {
+        MenuSeleccionable menu = new MenuSeleccionable("Va a Comprar\t\tSubtotal: " + carrito.subtotal(), opciones);
+        string opc = menu.EsperarEleccion();
+
+        if(opc == PROCEDER_OPC) {
+          float vuelto = 0;
+          bool bandera_salida_pago = false;
+          Console.WriteLine("Con cuanto va a pagar?");
+          while(!bandera_salida_pago){
+            Console.Write("-> ");
+            int pago = int.Parse(Console.ReadLine());
+            if (pago < carrito.subtotal()) {
+              Console.WriteLine($"Ingreso {carrito.subtotal()-pago} menos del monto a pagar ({carrito.subtotal()})");
+            } else {
+              vuelto = tienda.VenderProducto(carrito.Items, pago);
+              carrito = new Carrito();
+              Console.WriteLine($"Muchas gracias por su compra, su vuelto es {vuelto}$");
+              bandera_salida_pago = true;
+            }
+          }
+          bandera_salida = true;
+        } else if(opc == CANCELAR_OPC) {
+          MenuSeleccionable menu_cancelar = new MenuSeleccionable("Está seguro de que quiere cancelar la operacion?", new List<string>(){"SI", "NO"});
+
+          string opc_cancelar = menu_cancelar.EsperarEleccion();
+
+          if (opc_cancelar == "SI") {
+            carrito = new Carrito();
+            bandera_salida = true;
+          }
+        } else {
+          // Eliminar un Producto del carrito
+          int index = opciones.IndexOf(opc);
+          Producto prod = contenidos_carrito[index];
+          MenuSeleccionable menu_eliminar = new MenuSeleccionable($"Seguro que quiere eliminar {prod.nombre} del carrito?", new List<string>(){"SI", "NO"});
+          string opc_eliminar = menu_eliminar.EsperarEleccion();
+          if (opc_eliminar == "SI") {
+            contenidos_carrito.Remove(prod);
+            opciones.Remove(opc);
+            carrito.EliminarProducto(prod);
+          }
+        }
+      }
     }
   
     //Manejar los casos para el modo cliente
@@ -164,9 +196,9 @@ namespace Tp2AAT {
       
 
       List<string> opciones = new List<string>(productos);
-      opciones.Add(SALIR_OPC);
       opciones.Add(CAJA_OPC);
-      MenuGenerico menu = new MenuGenerico("Que quiere agregar al carrito", opciones);
+      opciones.Add(SALIR_OPC);
+      MenuSeleccionable menu = new MenuSeleccionable("Que quiere agregar al carrito", opciones);
 
       bool bandera_salida = false;
       while (!bandera_salida) {
@@ -175,7 +207,7 @@ namespace Tp2AAT {
         if(opc == SALIR_OPC) {
           bandera_salida = true;
         } else if (opc == CAJA_OPC) {
-          CajaMenu(carrito);
+          CajaMenu();
           bandera_salida = true;
         } else {
           AgregarAlCarrito(opc);
@@ -183,28 +215,22 @@ namespace Tp2AAT {
       }
     }
   
-
     public static void Main() {
       Console.WriteLine("Bienvenido a la tienda Mauricio Shop");
-      int bandera_salida = 0;
+      MenuSeleccionable menu_salida = new MenuSeleccionable("¿Quieres seguir navegando?", new List<string> {"Si", "No"});
+      bool bandera_salida = false;
       
-      while (bandera_salida == 0){
+      while (!bandera_salida){
         if (esVendedor()) {
           MenuVendedor();
         } else { 
           MenuCliente();
         }
         
-        Console.WriteLine("¿Quieres seguir navegando? (s/n)");
-        string salir = Console.ReadLine();
-        
-        if(salir.ToUpper() == "S" || salir.ToUpper() == "N"){
-          if(salir.ToUpper() == "N"){
-            bandera_salida += 1;
-          }
-        } else {
-          throw new Exception("Opcion no valida");
-        }    
+        string opc = menu_salida.EsperarEleccion();
+        if(opc == "No"){
+          bandera_salida = true;
+        }
       }   
     }
   }
