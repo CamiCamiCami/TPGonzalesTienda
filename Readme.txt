@@ -3,7 +3,7 @@ Camilo Sodo, Bautista Jose Bona
 
 El proposito de existencia de este Readme.txt es explicar algunas cuestiones del codigo
 
-1-El menu interactivo al querer entrar al sistema pide una contraseña, esta es: "TpAAT"
+1-El menu interactivo al querer entrar al sistema como vendedor pide una contraseña, esta es: "TpAAT"
 
 2-Existen dos clases por de mas a las previstas que estan destinadas a el menu interactivo de nuestro Tp, la modularizacion se debe a que el Main hubiese quedado sobrecargado de codigo innecesario.
 
