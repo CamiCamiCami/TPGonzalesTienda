@@ -3,22 +3,28 @@ using System;
 
 namespace Tp2AAT {
     class AgregarAlCarritoMenu {
-        private int Unidades = 0;
-        private Producto ProductoCompra;
+        
+        private int Unidades = 0; //Cantidad de Unidades que se van a agregar al carrito o que ya estaban en el
+        private Producto ProductoCompra; //Producto que se quiere agregar al carrito
         public int Seleccionado = 0;
-        private (int Left, int Top) CantidadPosCursor;
-        private (int Left, int Top) PrecioPosCursor;
+        
+        private (int Left, int Top) CantidadPosCursor; //Posicion del cursor en la cantidad de unidades
+        private (int Left, int Top) PrecioPosCursor; //Posicion del cursor en el precio del producto
 
+        //Metodo para darle al objeto el producto que se esta queriendo agregar al carrito y la cantidad de este
+        //La cantidad si el producto ya estaba en el carrito, se inicializa con la cantidad existente, sino 0
+        public AgregarAlCarritoMenu(Producto prod, int cantidad_inicial = 0) {
+            ProductoCompra = prod;
+            Unidades = cantidad_inicial;
+        }
+
+        //Metodo para recibir una tecla del usuario
         private static ConsoleKey EsperarTecla() {
             return Console.ReadKey(true).Key;
         }
 
-        public AgregarAlCarritoMenu(Producto prod, int cantidad_inicial = 0) {
-            this.ProductoCompra = prod;
-            this.Unidades = cantidad_inicial;
-        }
-
         private void PrintCambioSeleccion(){
+           
             const int CantOpciones = 3;
             int col_guardado = Console.CursorLeft;
             int fila_guardado = Console.CursorTop;
@@ -36,70 +42,79 @@ namespace Tp2AAT {
         }
 
         private void PrintOpciones() {
-            // Titulo
-            Console.WriteLine($"¿Cuantas unidades de {this.ProductoCompra.nombre} quiere llevar?");
-            // Primera Opcion - Elegir Cantidad
-            Console.Write(" \t< ");
-            this.CantidadPosCursor.Left = Console.CursorLeft;
-            Console.WriteLine(this.Unidades + " > ");
-            // Segunda Opcion - Agregar 
-            Console.Write(" \tAgregar al Carrito (");
-            this.PrecioPosCursor.Left = Console.CursorLeft;
-            Console.WriteLine((this.Unidades * this.ProductoCompra.precio) + "$)");
-            // Tercera Opcion - Cancelar
-            Console.WriteLine(" \tCancelar");
-            this.CantidadPosCursor.Top = Console.CursorTop - 3;
-            this.PrecioPosCursor.Top = Console.CursorTop - 2;
+            
+            Console.WriteLine($"¿Cuantas unidades de {this.ProductoCompra.nombre} quiere llevar?"); //Titulo - Producto
+            Console.Write(" \t< "); // Primera Opcion - Elegir Cantidad
+            CantidadPosCursor.Left = Console.CursorLeft;
+            Console.WriteLine(Unidades + " > ");
+            
+            Console.Write(" \tAgregar al Carrito (");  // Segunda Opcion - Agregar
+            PrecioPosCursor.Left = Console.CursorLeft;
+            Console.WriteLine((Unidades * this.ProductoCompra.precio) + "$)");
+            
+            Console.WriteLine(" \tCancelar"); // Tercera Opcion - Cancelar
+            CantidadPosCursor.Top = Console.CursorTop - 3;
+            PrecioPosCursor.Top = Console.CursorTop - 2;
         }
 
+        //Metodo para visualizar el cambio de cantidad de unidades a comprar
         private void PrintCambioUnidades(){
-            (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //guardar la posicion del cursor actual
-            Console.SetCursorPosition(this.CantidadPosCursor.Left, this.CantidadPosCursor.Top);
-            Console.Write(this.Unidades + " > "); //actualizar la cantidad 
-            Console.SetCursorPosition(this.PrecioPosCursor.Left, this.PrecioPosCursor.Top);
-            Console.Write((this.Unidades * this.ProductoCompra.precio) + "$) "); //actualizar el precio 
-            Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft));  // Rellena el resto de la linea con espacios
-            Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top); // devuelve el cursor al lugar donde estaba
+            
+            (int Left, int Top) cursor_guardado = (Console.CursorLeft, Console.CursorTop); //Guardar la posicion del cursor actual
+            
+            Console.SetCursorPosition(CantidadPosCursor.Left, CantidadPosCursor.Top); //Poner el cursor en la posicion de la cantidad
+            Console.Write(Unidades + " > "); //Actualizar la cantidad 
+            
+            Console.SetCursorPosition(this.PrecioPosCursor.Left, this.PrecioPosCursor.Top); //Poner el cursor en la posicion del precio
+            Console.Write((this.Unidades * this.ProductoCompra.precio) + "$) "); //Actualizar el precio en base a la cantidad seleccionada
+            
+            Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft));  //Rellena el resto de la linea con espacios
+            Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top); //Devuelve el cursor al lugar donde estaba
         }
 
+        //Metodo para el manejo del menu
         public int EsperarCantidad() {
-            this.PrintOpciones();
-            this.Seleccionado = 0;
-            this.PrintCambioSeleccion();
+            
+            PrintOpciones(); //Se muestran las opciones por primera vez
+            Seleccionado = 0;
+            PrintCambioSeleccion(); //se ubica el cursor en la primera opcion
 
             while(true){
-                ConsoleKey tecla = EsperarTecla();
+                ConsoleKey tecla = EsperarTecla(); //Se espera una tecla del usuario
         
                 switch (tecla) {
-          
-                    case ConsoleKey.UpArrow:
-                        this.Seleccionado = this.Seleccionado - 1 >= 0 ? this.Seleccionado - 1 : 0;
-                        this.PrintCambioSeleccion();
+
+                //Con las flechas de arriba y abajo se puede mover por el menu
+                case ConsoleKey.UpArrow: 
+                        Seleccionado = Seleccionado - 1 >= 0 ? Seleccionado - 1 : 0;
+                        PrintCambioSeleccion();
                         break;
           
                     case ConsoleKey.DownArrow:
-                        this.Seleccionado = this.Seleccionado + 1 < 3 ? this.Seleccionado + 1 : 3 - 1;
-                        this.PrintCambioSeleccion();
+                        Seleccionado = Seleccionado + 1 < 3 ? Seleccionado + 1 : 3 - 1;
+                        PrintCambioSeleccion();
                         break;
-          
+
+                    //Con las flechas de izquierda y derecha cambia la cantidad
                     case ConsoleKey.LeftArrow:
-                        if (this.Seleccionado == 0) {
-                            this.Unidades = this.Unidades - 1 >= 0 ? this.Unidades - 1 : 0;
-                            this.PrintCambioUnidades();
+                        if (Seleccionado == 0) {
+                            Unidades = Unidades - 1 >= 0 ? Unidades - 1 : 0;
+                            PrintCambioUnidades();
                         }
                         break;
                   
                     case ConsoleKey.RightArrow:
-                        if (this.Seleccionado == 0) {
-                            this.Unidades = this.Unidades + 1;
-                            this.PrintCambioUnidades();
+                        if (Seleccionado == 0) {
+                            Unidades = Unidades + 1;
+                            PrintCambioUnidades();
                         }
                         break;
-                  
+                    //Cuando se presiona Enter se devuelve la cantidad que se selecciono o se sale del menu y se devuelve 0
                     case ConsoleKey.Enter:
-                        if (this.Seleccionado == 1) {
-                            return this.Unidades;
-                        } else if (this.Seleccionado == 2) {
+                        if (Seleccionado == 1) {
+                            return Unidades;
+                        } 
+                        else if (Seleccionado == 2) {
                             return 0;
                         }
                         break;

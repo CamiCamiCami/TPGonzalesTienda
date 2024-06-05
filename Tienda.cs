@@ -3,36 +3,26 @@ using System;
 
 namespace Tp2AAT {
     class Tienda {
-      
-      //Inicializamos la lista de productos que estaran disponibles en la tienda
-      private List<Producto> productos = new List<Producto>();
-      //Propiedad para obtener y definir un dinero en la caja
-      public double caja { get; private set; } = 0;
+
+      private List<Producto> productos = new List<Producto>(); //Inicializamos la lista de productos que estaran disponibles en la tienda
+      public double caja { get; private set; } = 0; //Propiedad para obtener y definir un dinero en la caja
 
       //Metodo para agregar productos a la lista de productos de la tienda
       public void AgregarProducto(Producto producto){
-        foreach(Producto p in productos){
-          if (p.nombre == producto.nombre){ //Si el producto ya existe en la lista, no se agrega
-            throw new Exception("El producto ya existe");
-          }
-        }
         productos.Add(producto); 
       }
-      
+
       //Metodo para vender un producto
       public float VenderProducto(Dictionary<Producto, int> diccionario, int pago){
+        
         float total = 0;
         foreach(var producto in diccionario){
           for(int i = 0; i < productos.Count; i++){
-            if(productos[i].nombre == producto.Key.nombre){
-              if(productos[i].stock >= producto.Value){
+            if(productos[i].nombre == producto.Key.nombre){ //Si el producto existe en la lista de productos
+              if(productos[i].stock >= producto.Value){ //Si hay stock suficiente
                 productos[i].stock -= producto.Value;
                 caja += productos[i].precio * producto.Value;
                 total += productos[i].precio * producto.Value;
-              }
-              else{
-                throw new Exception("No hay suficiente stock, la compra ha fallado");
-                
               }
             }
           }
@@ -42,27 +32,30 @@ namespace Tp2AAT {
 
       //Metodo para eliminar productos de la lista
       public void EliminarProducto(string nombre) {
+        
         foreach(Producto p in productos) {
           if (p.nombre == nombre) {
             productos.Remove(p);
             return;
           }
         }
-        throw new Exception("El producto no existe");
       }
 
       //Metodo para buscar por un producto en la lista de productos
       public Producto ConsultarProducto(string nombre) {
+        
         foreach(Producto p in productos) {
-          if (p.nombre == nombre) {
+          if (p.nombre.ToUpper() == nombre.ToUpper()) {
             return p;
           }
+          
         }
-        throw new Exception("El producto no existe");
+        return null;
       }
 
       //Metodo para obtener unicamente los nombres de los productos
       public List<string> ConsultarNombres() {
+        
         List<string> nombres = new List<string>();
         foreach(Producto p in productos) {
           nombres.Add(p.nombre);
@@ -79,7 +72,7 @@ namespace Tp2AAT {
         }
         return contenido;
       }
-      
+
       //Metodo que agrega algunos productos basicos a la tienda
       public static Tienda AgregarProductosDefault(Tienda _tienda){
         _tienda.AgregarProducto(new Producto("Desodorante", 5000, 50));
@@ -87,7 +80,7 @@ namespace Tp2AAT {
         _tienda.AgregarProducto(new Producto("Lampara", 30000, 55));
         _tienda.AgregarProducto(new Producto("Vino", 10000, 38));
         _tienda.AgregarProducto(new Producto("Celular", 1000000, 74));
-        _tienda.AgregarProducto(new Producto("Monitor", 500000, 67));
+        _tienda.AgregarProducto(new Producto("Monitor", 500000, 3));
         _tienda.AgregarProducto(new Producto("Panel de Vidro", 60000, 94));
         _tienda.AgregarProducto(new Producto("Cinturon", 8000, 27));
         _tienda.AgregarProducto(new Producto("Block de Notas", 3000, 43));
@@ -104,7 +97,6 @@ namespace Tp2AAT {
         _tienda.AgregarProducto(new Producto("Sabana", 7200, 23));
         _tienda.AgregarProducto(new Producto("Mochila", 6000, 89));
         return _tienda;
-      }  
-      
+      }
     }
-}
+} 

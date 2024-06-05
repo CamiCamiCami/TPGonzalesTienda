@@ -8,6 +8,7 @@ namespace Tp2AAT {
 
     //Metodo para agregar productos al carrito, si ya esta presente setea la cantidad
     public void agregarProducto(Producto prod, int cantidad){
+      
       if (cantidad == 0) {
         if (Items.ContainsKey(prod)) {
           Items.Remove(prod);
@@ -44,10 +45,11 @@ namespace Tp2AAT {
     public int CantidadEnCarrito(Producto prod) {
       if(this.Items.ContainsKey(prod)) {
         return this.Items[prod];
-      } else {
+      } 
+      else {
         return 0;
       }
     }
-    
+
   }
 }
