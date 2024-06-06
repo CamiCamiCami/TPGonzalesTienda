@@ -13,4 +13,4 @@ MenuSeleccionable: Este Menu es usado para casi todos los menus del Tp
 
 AgregarAlCarritoMenu: Este es un menu mas del sistema que esta dedicado unicamente a agregar productos al carrito, pero al ser un poco mas complejo al de un menu comun, creimos para un mejor entendimiento y legibilidad, separarlo de la anterior clase.
 
-
+4-Los menus se controlan con las flechas del teclado para moverse y el enter para elegir una opcion 
