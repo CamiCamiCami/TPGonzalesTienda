@@ -3,10 +3,13 @@ using System;
 
 namespace Tp2AAT {
     class AgregarAlCarritoMenu {
+   
         
         private int Unidades = 0; //Cantidad de Unidades que se van a agregar al carrito o que ya estaban en el
         private Producto ProductoCompra; //Producto que se quiere agregar al carrito
-        public int Seleccionado = 0;
+        public int Seleccionado {get; private set; } = 0;
+
+        public const int CantOpciones = 3;
         
         private (int Left, int Top) CantidadPosCursor; //Posicion del cursor en la cantidad de unidades
         private (int Left, int Top) PrecioPosCursor; //Posicion del cursor en el precio del producto
@@ -24,8 +27,6 @@ namespace Tp2AAT {
         }
 
         private void PrintCambioSeleccion(){
-           
-            const int CantOpciones = 3;
             int col_guardado = Console.CursorLeft;
             int fila_guardado = Console.CursorTop;
 
@@ -42,15 +43,14 @@ namespace Tp2AAT {
         }
 
         private void PrintOpciones() {
-            
-            Console.WriteLine($"¿Cuantas unidades de {this.ProductoCompra.nombre} quiere llevar?"); //Titulo - Producto
+            Console.WriteLine($"¿Cuantas unidades de {this.ProductoCompra.Nombre} quiere llevar?"); //Titulo - Producto
             Console.Write(" \t< "); // Primera Opcion - Elegir Cantidad
             CantidadPosCursor.Left = Console.CursorLeft;
             Console.WriteLine(Unidades + " > ");
             
             Console.Write(" \tAgregar al Carrito (");  // Segunda Opcion - Agregar
             PrecioPosCursor.Left = Console.CursorLeft;
-            Console.WriteLine((Unidades * this.ProductoCompra.precio) + "$)");
+            Console.WriteLine((Unidades * this.ProductoCompra.Precio) + "$)");
             
             Console.WriteLine(" \tCancelar"); // Tercera Opcion - Cancelar
             CantidadPosCursor.Top = Console.CursorTop - 3;
@@ -66,7 +66,7 @@ namespace Tp2AAT {
             Console.Write(Unidades + " > "); //Actualizar la cantidad 
             
             Console.SetCursorPosition(this.PrecioPosCursor.Left, this.PrecioPosCursor.Top); //Poner el cursor en la posicion del precio
-            Console.Write((this.Unidades * this.ProductoCompra.precio) + "$) "); //Actualizar el precio en base a la cantidad seleccionada
+            Console.Write((this.Unidades * this.ProductoCompra.Precio) + "$) "); //Actualizar el precio en base a la cantidad seleccionada
             
             Console.Write(new string(' ', Console.WindowWidth - Console.CursorLeft));  //Rellena el resto de la linea con espacios
             Console.SetCursorPosition(cursor_guardado.Left, cursor_guardado.Top); //Devuelve el cursor al lugar donde estaba
@@ -91,7 +91,7 @@ namespace Tp2AAT {
                         break;
           
                     case ConsoleKey.DownArrow:
-                        Seleccionado = Seleccionado + 1 < 3 ? Seleccionado + 1 : 3 - 1;
+                        Seleccionado = Seleccionado + 1 < CantOpciones ? Seleccionado + 1 : CantOpciones - 1;
                         PrintCambioSeleccion();
                         break;
 

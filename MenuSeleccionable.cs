@@ -5,16 +5,14 @@ namespace Tp2AAT {
     
     class MenuSeleccionable {
         
-        private List<string> Opciones = new List<string>();
+        private List<string> Opciones;
         private string Titulo;
         public int CantOpciones {get; private set; }
-        public int Seleccionado = 0;
+        public int Seleccionado { get; private set; } = 0;
 
         //Metodo para determinar el titulo y las opciones
         public MenuSeleccionable(string titulo_menu, List<string> opciones_menu) {
-            foreach(string opc in opciones_menu) {
-                Opciones.Add(opc);
-            }
+            Opciones = new List<string>(opciones_menu);
             CantOpciones = opciones_menu.Count;
             Titulo = titulo_menu;
         }

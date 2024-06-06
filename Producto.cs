@@ -4,27 +4,27 @@ namespace Tp2AAT {
   
   class Producto {
     //Propiedades de los productos
-    public string nombre { get; private set; }
+    public string Nombre { get; private set; }
 
-    public float costo { get; private set; }
+    public float Costo { get; private set; }
 
-    public int stock { get; set; }
+    public int Stock { get; set; }
 
-    public float precio{
-      get {return costo*130/100;}
+    public float Precio{
+      get {return Costo*130/100;}
     }
 
     //Metodo para determinar las propiedades del Producto
-    public Producto(string nombre_n, float costo_n, int stock_n){
-      nombre = nombre_n;
-      costo = costo_n;
-      stock = stock_n;
+    public Producto(string nombre_n, float costo_n, int stock_n = 0){
+      if(nombre_n == "") {
+        throw new Exception("No se puede crear un producto sin nombre");
+      }
+      if(costo_n <= 0) {
+        throw new Exception($"No se puede crear un producto con costo menor o igual a cero ({costo_n})");
+      }
+      Nombre = nombre_n;
+      Costo = costo_n;
+      Stock = stock_n;
     }
-    
-    //Metodo para imprimir las propiedades del Producto
-    public string InformacionProducto(){
-      return $"{nombre}\t| Precio: {precio}\t| Stock: {stock}";
-    }
-
   }
 }

@@ -7,14 +7,12 @@ namespace Tp2AAT {
     public Dictionary<Producto, int> Items {get; private set; } = new Dictionary<Producto, int>();
 
     //Metodo para agregar productos al carrito, si ya esta presente setea la cantidad
-    public void agregarProducto(Producto prod, int cantidad){
-      
+    public void AgregarProducto(Producto prod, int cantidad){
       if (cantidad == 0) {
         if (Items.ContainsKey(prod)) {
           Items.Remove(prod);
         }
-      }
-      if(Items.ContainsKey(prod)) {
+      } else if(Items.ContainsKey(prod)) {
         Items[prod] = cantidad;
       } else {
         Items.Add(prod, cantidad);
@@ -29,10 +27,10 @@ namespace Tp2AAT {
     }
 
     //Metodo para obtener el total de productos en el carrito
-    public double subtotal() {
+    public double Subtotal() {
       double subtotal = 0;
       foreach(Producto prod in Items.Keys) {
-        subtotal += Items[prod] * prod.precio;
+        subtotal += Items[prod] * prod.Precio;
       }
 
       return subtotal;
@@ -40,16 +38,18 @@ namespace Tp2AAT {
 
     public List<Producto> ProductosEnCarrito() {
       return new List<Producto>(this.Items.Keys);
-}
+    }
 
     public int CantidadEnCarrito(Producto prod) {
       if(this.Items.ContainsKey(prod)) {
         return this.Items[prod];
-      } 
-      else {
+      } else {
         return 0;
       }
     }
 
+    public bool EstaVacio() {
+      return Items.Count == 0;
+    }
   }
 }
